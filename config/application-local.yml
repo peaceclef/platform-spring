@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: "platform"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:15432/mydatabase
+    username: myuser
+    password: secret
+
+mybatis:
+  mapper-locations:
+  - classpath*:sql/*.xml
+  - classpath*:sql/**/*.xml
+  type-aliases-package: 
+    net.herit.platform.platform_spring.features.com.dto.entity.**
+  configuration:
+    map-underscore-to-camel-case: false
