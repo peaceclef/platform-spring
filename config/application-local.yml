@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: "platform"
+    name: platform
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:15432/mydatabase
