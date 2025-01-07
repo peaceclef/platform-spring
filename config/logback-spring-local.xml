@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="LOG_ROOT" value="/logs"/>
+	<property name="LOG_FOLDER" value="zems"/>
+	<property name="CALL_LOG_PATH" value="${LOG_ROOT}/callLog/${LOG_FOLDER}"/>
+	<property name="OUT_LOG_PATH" value="${LOG_ROOT}/outLog/${LOG_FOLDER}"/>
+	<property name="ERROR_LOG_PATH" value="${LOG_ROOT}/errorLog/${LOG_FOLDER}"/>
+	<property name="STD_LOG_PATH" value="${LOG_ROOT}/std/${LOG_FOLDER}"/>
+	
+	<property name="CALL_LEVEL" value="INFO"/>
+	<property name="OUT_LEVEL" value="INFO"/>
+	<property name="STD_LEVEL" value="INFO"/>
+	<property name="ERROR_LEVEL" value="INFO"/>
+		
+	<timestamp key="YYYY" datePattern="yyyy"/>
+	<timestamp key="MM" datePattern="MM"/>
+	<timestamp key="DD" datePattern="dd"/>
+	<timestamp key="hhmiss" datePattern="HHmmss"/>
+	<timestamp key="dirTime" datePattern="yyyy/MM/dd"/>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%d] %-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STD_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${STD_LOG_PATH}/std.log</file>
+		<encoder>
+			<pattern>[%d] %-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${STD_LOG_PATH}/%d{yyyy/MM/dd}/std.log.%i</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>10GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="CALL_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${CALL_LOG_PATH}/call.log</file>
+		<encoder>
+			<pattern>[%d] - %-5level %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${CALL_LOG_PATH}/%d{yyyy/MM/dd}/call.log.%i</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>10GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="OUT_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${OUT_LOG_PATH}/out.log</file>
+		<encoder>
+			<pattern>[%d] - %-5level %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${OUT_LOG_PATH}/%d{yyyy/MM/dd}/out.log.%i</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>10GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="ERROR_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${ERROR_LOG_PATH}/error.log</file>
+		<encoder>
+			<pattern>[%d] - %-5level %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${ERROR_LOG_PATH}/%d{yyyy/MM/dd}/error.log.%i</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>7</maxHistory>
+			<totalSizeCap>10GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+	
+	<logger name="net.herit.platform.platform_spring.common.logger.call.CallLogger" level="${CALL_LEVEL}">
+		<appender-ref ref="CALL_LOG_FILE"/>
+	</logger>
+	<logger name="com.herit.hzems.common.logger.out.OutLogger" level="${OUT_LEVEL}">
+		<appender-ref ref="OUT_LOG_FILE"/>
+	</logger>
+	<logger name="com.herit.hzems.common.logger.err.ErrorLogger" level="${ERROR_LEVEL}">
+		<appender-ref ref="ERROR_LOG_FILE"/>
+	</logger>
+		
+	<root level="${STD_LEVEL}">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="STD_LOG_FILE"/>
+	</root>
+
+</configuration>

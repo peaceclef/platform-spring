@@ -1,6 +1,9 @@
 server:
   port: 8080
 
+logging:
+  config: file:./config/logback-spring-local.xml
+
 spring:
   application:
     name: platform
