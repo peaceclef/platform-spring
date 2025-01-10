@@ -24,6 +24,8 @@ public class HttpLoggingAop {
 
     @Before("httpLog()")
 	public void beforeHttpLog(JoinPoint joinPoint) throws IOException {
+        
+
         clg.info(SourceToTarget.LeftIn("hzems", "http"), () -> "[result]" + joinPoint);
     }
 
