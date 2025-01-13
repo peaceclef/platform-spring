@@ -8,20 +8,16 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.http.client.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Component
 public class HttpUtil {
-	@Autowired(required=false)
-	private HttpClient httpClient;
 
-	public String builderString(InputStream input) throws IOException {
+    public String builderString(InputStream input) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
         BufferedReader bufferedReader = null;
         try {
@@ -60,11 +56,12 @@ public class HttpUtil {
 		return reqHeader;		
 	}
 	
-	public RestTemplate getRestTemplate(int readTimeout, int connectTimeout){
-		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-		//requestFactory.setHttpClient(this.httpClient);
-		//requestFactory.setReadTimeout(readTimeout);
-		requestFactory.setConnectionRequestTimeout(connectTimeout);		
-		return new RestTemplate(requestFactory);
+	public RestTemplate getRestTemplate(int setConnectionRequestTimeout, int connectTimeout){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        httpRequestFactory.setConnectionRequestTimeout(setConnectionRequestTimeout); // 요청 시간
+        httpRequestFactory.setConnectTimeout(connectTimeout); // tcp 연결 시간
+        restTemplate.setRequestFactory(httpRequestFactory);
+        return restTemplate;
 	}
 }
