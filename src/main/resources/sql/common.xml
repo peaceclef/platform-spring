@@ -5,9 +5,17 @@
     <select id="selectCommonCodeList" resultType="commonCodeEtt">
         select cd
              , nm
-             , prnt_cd
+             , prnt_cd as prntCd
              , "desc"
           from tb_com_cmn_cd_l
+        <where>
+            <if test="prntCd != null and prntCd != ''">
+                and prnt_cd = #{prntCd}
+            </if>
+            <if test="cd != null and cd != ''">
+                and cd = #{cd}
+            </if>
+        </where>
     </select>
 
 </mapper>

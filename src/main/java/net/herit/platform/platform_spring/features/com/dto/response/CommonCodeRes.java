@@ -9,6 +9,6 @@ import net.herit.platform.platform_spring.features.com.dto.entity.CommonCodeEtt;
 @Data
 @Builder
 public class CommonCodeRes {
-    private int resultCode;
+    private int code;
     private List<CommonCodeEtt> data;
 }
