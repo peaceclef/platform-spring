@@ -8,14 +8,31 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.reflect.CodeSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class HttpUtil {
+    @Autowired
+    private ObjectMapper mapper;
+
+    public RestTemplate getRestTemplate(int setConnectionRequestTimeout, int connectTimeout){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        httpRequestFactory.setConnectionRequestTimeout(setConnectionRequestTimeout); // 요청 시간
+        httpRequestFactory.setConnectTimeout(connectTimeout); // tcp 연결 시간
+        restTemplate.setRequestFactory(httpRequestFactory);
+        return restTemplate;
+	}
 
     public String builderString(InputStream input) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -56,12 +73,17 @@ public class HttpUtil {
 		return reqHeader;		
 	}
 	
-	public RestTemplate getRestTemplate(int setConnectionRequestTimeout, int connectTimeout){
-        RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        httpRequestFactory.setConnectionRequestTimeout(setConnectionRequestTimeout); // 요청 시간
-        httpRequestFactory.setConnectTimeout(connectTimeout); // tcp 연결 시간
-        restTemplate.setRequestFactory(httpRequestFactory);
-        return restTemplate;
+    public String getRequestParams(JoinPoint joinPoint) throws JsonProcessingException {
+	    StringBuilder params = new StringBuilder();
+		CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
+		String[] parameterNames = codeSignature.getParameterNames();
+		Object[] args = joinPoint.getArgs();
+
+		for (int i = 0; i < parameterNames.length; i++) {
+            String strObject = mapper.writeValueAsString(args[i]);
+            params.append(strObject);
+		}
+
+        return params.toString();
 	}
 }

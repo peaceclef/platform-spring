@@ -8,15 +8,11 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,8 +26,6 @@ import net.herit.platform.platform_spring.common.util.HttpUtil;
 @Aspect
 @Component
 public class HttpLoggingAop {
-    @Autowired
-    private ObjectMapper mapper;
     @Autowired
     private HttpUtil util;
     @Autowired
@@ -57,7 +51,7 @@ public class HttpLoggingAop {
 
         if(tracker == null) {
             int callId = CallFactory.newCallID();
-            String txId = CallFactory.newTransactionID("REMS+", "HTTP", callId);
+            String txId = CallFactory.newTransactionID(ServiceInfo.name, "HTTP", callId);
             tracker = new Tracker(txId, String.valueOf(callId));
             tracker.setJobId(joinPoint.getSignature().getName());
             request.setAttribute("tracker", tracker);
@@ -73,7 +67,7 @@ public class HttpLoggingAop {
         .append(request.getProtocol()).append(", ").append(address).append(", ").append(request.getServerPort()).append(", ");
         
         // params 조회
-        String params = getRequestParams(joinPoint);
+        String params = util.getRequestParams(joinPoint);
         
         if(params != null) {
             strReq.append("body=");
@@ -101,18 +95,4 @@ public class HttpLoggingAop {
         
         clg.info(SourceToTarget.LeftOut(ServiceInfo.name, "HTTP"), tracker, () -> "res : " + strParams.toString());
     }
-
-    private String getRequestParams(JoinPoint joinPoint) throws JsonProcessingException {
-	    StringBuilder params = new StringBuilder();
-		CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
-		String[] parameterNames = codeSignature.getParameterNames();
-		Object[] args = joinPoint.getArgs();
-
-		for (int i = 0; i < parameterNames.length; i++) {
-            String strObject = mapper.writeValueAsString(args[i]);
-            params.append(strObject);
-		}
-
-        return params.toString();
-	}
 }

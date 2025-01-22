@@ -2,6 +2,7 @@ package net.herit.platform.platform_spring.common.interceptor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,8 +24,12 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.herit.platform.platform_spring.common.logger.SourceToTarget;
+import net.herit.platform.platform_spring.common.logger.Tracker;
 import net.herit.platform.platform_spring.common.logger.call.CallLogger;
 import net.herit.platform.platform_spring.common.system.ServiceInfo;
 
@@ -39,12 +44,21 @@ public class MybatisLogInterceptor implements Interceptor{
 
     @Override
     public Object intercept(Invocation invocation) throws InvocationTargetException, IllegalAccessException{
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        Tracker tracker = (Tracker) request.getAttribute("tracker");
+        long start = System.currentTimeMillis();
+        Object origin = invocation.proceed();
+
         MappedStatement statement = (MappedStatement) invocation.getArgs()[0];
         Object paramObj = invocation.getArgs()[1];
 
         BoundSql boundSql = statement.getBoundSql(paramObj);
-        String paramSql = getParamBindSql(boundSql);
-        clg.info(SourceToTarget.RightOut(ServiceInfo.name, "DB"), () -> "[result]" + paramSql);
+        StringBuilder paramSql = new StringBuilder(getParamBindSql(boundSql));
+        paramSql.append(" ... " + (origin instanceof List ? ((List<?>) origin).size() : origin));
+        paramSql.append(" ... " + (Clock.systemDefaultZone().millis() - start));
+
+        clg.info(SourceToTarget.RightOut(ServiceInfo.name, "DB"), tracker, () -> "[SQL]" + paramSql.toString());
+        
         return invocation.proceed();
     }
 
