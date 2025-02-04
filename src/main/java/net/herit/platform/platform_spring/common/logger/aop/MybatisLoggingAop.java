@@ -1,6 +1,5 @@
 package net.herit.platform.platform_spring.common.logger.aop;
 
-import org.apache.ibatis.binding.MapperProxy;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
