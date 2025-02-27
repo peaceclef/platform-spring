@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.herit.platform.platform_spring.features.auth.repository.AuthRepository">
+
+    <select id="selectAuthMngrOne" resultType="AuthMngrEtt">
+        select mngr_id 
+             , pwd 
+             , f_cnt 
+             , salt 
+             , ty 
+             , nm 
+             , eml 
+             , svc_yn 
+             , lg_pth
+             , lg_nm
+          from tb_evi_mngr_d
+         where lgn_id = #{lgnId}
+    </select>
+
+    <update id="updateAuthMngrFCnt">
+        update tb_evi_mngr_d
+           set f_cnt = #{fCnt}
+         where lgn_id = #{lgnId}
+    </update>
+
+    <insert id="insertAndUpdateTokenCert">
+        INSERT INTO public.tb_evi_mngr_ctf_d
+        (mngr_id, bld_id, acs_tkn, rnw_tkn, crt_dt, upd_dt)
+        VALUES(
+            #{mngr_id}
+          , #{bldId}
+          , #{access_token}
+          , #{refresh_token}
+          , now()
+          , now())
+         on conflict (mngr_id)
+         do update set 
+            acs_tkn = excluded.acs_tkn
+          , rnw_tkn = excluded.rnw_tkn
+          , upd_dt = excluded.upd_dt
+    </insert>
+
+    <select id="selectRefreshToken">
+        select acs_tkn
+             , rnw_tkn
+          from tb_evi_mngr_ctf_d
+         where mngr_id = #{mngr_id}
+    </select>
+
+</mapper>

@@ -59,7 +59,7 @@ public class MybatisLogInterceptor implements Interceptor{
 
         clg.info(SourceToTarget.RightOut(ServiceInfo.name, "DB"), tracker, () -> "[SQL]" + paramSql.toString());
         
-        return invocation.proceed();
+        return origin;
     }
 
     public String getParamBindSql(BoundSql boundSql){

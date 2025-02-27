@@ -19,5 +19,18 @@ mybatis:
   - classpath*:sql/**/*.xml
   type-aliases-package: 
     net.herit.platform.platform_spring.features.com.dto.entity.**
+    net.herit.platform.platform_spring.features.auth.dto.entity.**
   configuration:
-    map-underscore-to-camel-case: false
+    map-underscore-to-camel-case: true
+
+token:
+  issuer: hzems
+  access:
+    secretkey: hzems$$access.token
+    expired:
+      minute: 5
+#      minute: 120
+  refresh:
+    secretkey: hzems$$refresh.token
+    expired:
+      minute: 10080

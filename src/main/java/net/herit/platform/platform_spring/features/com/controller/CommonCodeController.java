@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import net.herit.platform.platform_spring.common.authenticator.annotation.AuthToken;
 import net.herit.platform.platform_spring.features.com.dto.entity.CommonCodeEtt;
 import net.herit.platform.platform_spring.features.com.dto.request.CommonCodeReq;
 import net.herit.platform.platform_spring.features.com.dto.response.CommonCodeRes;
@@ -22,6 +23,7 @@ public class CommonCodeController {
     @Autowired
     private CommonCodeService srv;
 
+    @AuthToken
     @GetMapping("/apis/v1/com/commonCode/list")
     public ResponseEntity<CommonCodeRes> getCommonCodeList(){
 
@@ -35,6 +37,7 @@ public class CommonCodeController {
         return new ResponseEntity<CommonCodeRes>(result, HttpStatus.OK);
     }
 
+    @AuthToken
     @PostMapping("/apis/v1/com/commonCode/")
     public ResponseEntity<CommonCodeRes> getCommonCode(@Valid @RequestBody CommonCodeReq dto){
         CommonCodeRes result = null;

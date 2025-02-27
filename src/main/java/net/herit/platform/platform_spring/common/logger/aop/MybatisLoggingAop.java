@@ -26,7 +26,7 @@ public class MybatisLoggingAop {
     @Autowired
     private ObjectMapper mapper;
 
-    @Pointcut("execution(* net..*Repository.*(..))")
+    @Pointcut("execution(* net.herit..*Repository.*(..))")
     private void mybatisLog() {};
 
     @AfterReturning(value = "mybatisLog()", returning = "returnObj")
@@ -34,7 +34,16 @@ public class MybatisLoggingAop {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         Tracker tracker = (Tracker) request.getAttribute("tracker");
 
-        String returnStr = mapper.writeValueAsString(returnObj);
+        StringBuilder strBld = new StringBuilder();
+        if(returnObj instanceof Integer){
+            strBld.append(returnObj);
+        } else if(returnObj instanceof String){
+            strBld.append(returnObj);
+        } else {
+            strBld.append(mapper.writeValueAsString(returnObj));
+        }
+
+        String returnStr = strBld.toString();
         clg.info(SourceToTarget.RightIn(ServiceInfo.name, "DB"), tracker, () -> "[result]" + returnStr);
     }
 }
