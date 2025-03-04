@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="LOG_ROOT" value="/logs"/>
+	<property name="LOG_ROOT" value="/Users/mykim/logs"/>
 	<property name="LOG_FOLDER" value="zems"/>
 	<property name="CALL_LOG_PATH" value="${LOG_ROOT}/callLog/${LOG_FOLDER}"/>
 	<property name="OUT_LOG_PATH" value="${LOG_ROOT}/outLog/${LOG_FOLDER}"/>
